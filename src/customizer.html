@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+  this is the customizer
+  <button onclick="handlePositionAndSizes()">get size</button>
+  <input type="range" min="0" max="100" onchange="handleOpacity(this)">
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    const handlePositionAndSizes = () => {
+      ipcRenderer.send('customize', 'position');
+    }
+
+    const handleOpacity = (el) => {
+      ipcRenderer.send('customize', el.value / 100);
+    }
+  </script>
+</body>
+
+</html>
