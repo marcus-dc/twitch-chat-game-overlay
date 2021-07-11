@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<head>
+  <link rel="stylesheet" href="./app-styles.css">
+</head>
+
 <body>
-  this is the customizer
-  <button onclick="handlePositionAndSizes()">get size</button>
-  <input type="range" min="0" max="100" onchange="handleOpacity(this)">
+  <div class="container flex flex-column align-items-center justify-content-center">
+    <label for="opacity">
+      <div>Opacity</div>
+      <input type="range" id="opacity" min="0" max="100" oninput="handleOpacity(this)">
+    </label>
+    <div>
+      <button onclick="handlePositionAndSizes()">Done</button>
+    </div>
+  </div>
 
   <script>
     const { ipcRenderer } = require('electron');

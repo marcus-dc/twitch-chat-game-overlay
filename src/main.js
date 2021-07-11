@@ -1,12 +1,16 @@
 const { app, BrowserWindow, ipcMain, Tray, Menu } = require('electron');
 const path = require('path');
+const utils = require('./utils');
 
-let win;
+// Windows
+let initWin;
+let appWin;
 let customizer;
+
 let tray;
 
 const createWindow = () => {
-  win = new BrowserWindow({
+  initWin = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -15,9 +19,9 @@ const createWindow = () => {
     }
   });
 
-  if (process.env.NODE_ENV.trim() !== 'production') win.webContents.openDevTools();
+  if (process.env.NODE_ENV.trim() !== 'production') initWin.webContents.openDevTools();
 
-  win.loadFile('./index.html');
+  initWin.loadFile('./index.html');
 };
 
 app.whenReady().then(() => {
@@ -29,38 +33,40 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit();
 });
 
-ipcMain.on('asynchronous-message', (evt, arg) => {
-  win = new BrowserWindow({
-    width: 800,
-    height: 600,
+ipcMain.on('initAppWin', (evt, arg) => {
+  appWin = new BrowserWindow({
+    ...utils.getSizeAndPosition(initWin),
     frame: false,
-    opacity: .75,
+    alwaysOnTop: arg.alwaysOnTop,
+    opacity: arg.opacity || .75,
+    skipTaskbar: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
     }
   });
 
-  win.setIgnoreMouseEvents(true);
-  win.loadURL(arg);
+  appWin.setIgnoreMouseEvents(true);
+  appWin.loadURL(arg.url);
+  initWin.close();
 
   tray = new Tray(path.join(__dirname, './assets/twitch.ico'));
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Always on Top',
+      checked: arg.alwaysOnTop,
       type: 'checkbox',
       click: (menuItem) => {
-        win.setAlwaysOnTop(menuItem.checked, 'normal');
-        win.setVisibleOnAllWorkspaces(true);
-        win.setFullScreenable(false);
+        appWin.setAlwaysOnTop(menuItem.checked, 'normal');
+        appWin.setVisibleOnAllWorkspaces(true);
+        appWin.setFullScreenable(false);
       }
     },
     {
       label: 'Customize',
       click: () => {
         customizer = new BrowserWindow({
-          width: 800,
-          height: 600,
+          ...utils.getSizeAndPosition(appWin),
           webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
@@ -81,14 +87,13 @@ ipcMain.on('asynchronous-message', (evt, arg) => {
 
 ipcMain.on('customize', (evt, arg) => {
   if (arg === 'position') {
-    const [width, height] = customizer.getSize();
-    const [x, y] = customizer.getPosition();
+    const { width, height, x, y } = utils.getSizeAndPosition(customizer);
 
-    win.setSize(width, height);
-    win.setPosition(x, y);
+    appWin.setSize(width, height);
+    appWin.setPosition(x, y);
 
     customizer.close();
   } else {
-    win.setOpacity(arg);
+    appWin.setOpacity(arg);
   }
 });

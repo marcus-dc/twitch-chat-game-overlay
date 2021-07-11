@@ -1,11 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<head>
+  <link rel="stylesheet" href="./app-styles.css">
+</head>
+
 <body>
-  <form id="form">
-    <input name="url" placeholder="URL" type="text" id="url"
-      value="https://dashboard.twitch.tv/popout/u/marviuz/stream-manager/chat">
-    <button type="submit">t</button>
+  <form id="form" class="container flex flex-column align-items-center justify-content-center">
+    <div>
+      <input name="url" placeholder="URL" id="url">
+    </div>
+    <label for="alwaysOnTop">
+      <input type="checkbox" name="alwaysOnTop" id="alwaysOnTop" checked>
+      <span>Always on top</span>
+    </label>
+    <label for="opacity">
+      <div>opacity</div>
+      <input type="range" name="opacity" id="opacity">
+    </label>
+    <button type="submit">Done!</button>
   </form>
 
   <script src="./renderer.js"></script>
