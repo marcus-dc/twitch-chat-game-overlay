@@ -9,22 +9,20 @@ const createWindow = () => {
   win = new BrowserWindow({
     width: 800,
     height: 600,
-    // frame: false,
-    // opacity: .75,
-    // alwaysOnTop: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
     }
   });
 
-  if (process.env.NODE_ENV !== 'production') win.webContents.openDevTools();
+  if (process.env.NODE_ENV.trim() !== 'production') win.webContents.openDevTools();
 
   win.loadFile('./index.html');
 };
 
 app.whenReady().then(() => {
   createWindow();
+  console.log(`> App ready`);
 });
 
 app.on('window-all-closed', function () {
@@ -37,7 +35,6 @@ ipcMain.on('asynchronous-message', (evt, arg) => {
     height: 600,
     frame: false,
     opacity: .75,
-    // alwaysOnTop: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -53,7 +50,9 @@ ipcMain.on('asynchronous-message', (evt, arg) => {
       label: 'Always on Top',
       type: 'checkbox',
       click: (menuItem) => {
-        win.setAlwaysOnTop(menuItem.checked);
+        win.setAlwaysOnTop(menuItem.checked, 'normal');
+        win.setVisibleOnAllWorkspaces(true);
+        win.setFullScreenable(false);
       }
     },
     {

@@ -1,11 +1,11 @@
 {
   "name": "twitch-chat-game-overlay",
   "version": "0.1.0",
-  "description": "",
+  "descriptio &&n": "",
   "main": "./src/main.js",
   "scripts": {
-    "start": "electron ./src/main.js",
-    "dev": "nodemon --exec \"electron ./src/main.js\""
+    "start": "SET NODE_ENV=production && electron ./src/main.js",
+    "dev": "SET NODE_ENV=developement && nodemon --exec \"electron ./src/main.js\""
   },
   "keywords": [],
   "homepage": "https://github.com/Marviuz/twitch-chat-game-overlay#readme",
